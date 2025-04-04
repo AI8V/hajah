@@ -37,6 +37,30 @@ document.addEventListener('DOMContentLoaded', function() {
         setupReportForm();
         setupReportTypeChange();
     }
+
+    // إضافة مستمع للأحداث لحساب السعر التلقائي
+    const quantityInput = document.getElementById('quantity');
+    const priceInput = document.getElementById('price');
+    
+    if (quantityInput && priceInput) {
+        // إضافة مستمع لتغيير الكمية
+        quantityInput.addEventListener('input', function() {
+            const quantity = parseInt(this.value) || 0;
+            const pricePerBag = 10; // سعر الكيس الواحد (يمكن تعديله)
+            const totalPrice = quantity * pricePerBag;
+            priceInput.value = totalPrice.toFixed(2);
+        });
+        
+        // إضافة مستمع لتغيير السعر
+        priceInput.addEventListener('input', function() {
+            const price = parseFloat(this.value) || 0;
+            const quantity = parseInt(quantityInput.value) || 0;
+            if (quantity > 0) {
+                const pricePerBag = (price / quantity).toFixed(2);
+                // يمكن إضافة سعر الكيس الواحد في مكان آخر إذا أردت
+            }
+        });
+    }
 });
 
 // وظائف الصفحة الرئيسية (index.html)
@@ -82,7 +106,7 @@ function loadDistributions() {
     
     if (recentDistributions.length === 0) {
         const emptyRow = document.createElement('tr');
-        emptyRow.innerHTML = '<td colspan="5" class="text-center">لا توجد توزيعات مسجلة بعد</td>';
+        emptyRow.innerHTML = '<td colspan="6" class="text-center">لا توجد توزيعات مسجلة بعد</td>';
         tableBody.appendChild(emptyRow);
         return;
     }
@@ -94,7 +118,8 @@ function loadDistributions() {
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${branchName}</td>
-            <td>${dist.quantity}</td>
+            <td>${dist.quantity} كيس عيش</td>
+            <td>${dist.price} جنيه</td>
             <td>${formatDateArabic(dist.date)}</td>
             <td>${dist.notes || '-'}</td>
             <td>
@@ -124,10 +149,11 @@ function setupDistributionForm() {
         
         const branchId = document.getElementById('branchSelect').value;
         const quantity = document.getElementById('quantity').value;
+        const price = document.getElementById('price').value;
         const date = document.getElementById('distributionDate').value;
         const notes = document.getElementById('notes').value;
         
-        if (!branchId || !quantity || !date) {
+        if (!branchId || !quantity || !date || !price) {
             alert('يرجى ملء جميع الحقول المطلوبة');
             return;
         }
@@ -137,6 +163,7 @@ function setupDistributionForm() {
             id: generateId(),
             branchId: branchId,
             quantity: parseInt(quantity),
+            price: parseFloat(price),
             date: date,
             notes: notes
         };
@@ -145,7 +172,7 @@ function setupDistributionForm() {
         saveDistributions();
         
         // تحديث حساب الفرع
-        updateBranchBalance(branchId, parseInt(quantity));
+        updateBranchBalance(branchId, parseInt(quantity), parseFloat(price));
         
         // إعادة تعيين النموذج وتحديث القائمة
         form.reset();
@@ -169,7 +196,7 @@ function deleteDistribution(id) {
             const dist = distributions[distIndex];
             
             // عكس تأثير التوزيع على رصيد الفرع (طرح الكمية)
-            updateBranchBalance(dist.branchId, -dist.quantity);
+            updateBranchBalance(dist.branchId, -dist.quantity, -dist.price);
             
             // حذف التوزيع
             distributions.splice(distIndex, 1);
@@ -190,7 +217,7 @@ function loadBranches() {
     
     if (branches.length === 0) {
         const emptyRow = document.createElement('tr');
-        emptyRow.innerHTML = '<td colspan="5" class="text-center">لا توجد فروع مسجلة بعد</td>';
+        emptyRow.innerHTML = '<td colspan="6" class="text-center">لا توجد فروع مسجلة بعد</td>';
         tableBody.appendChild(emptyRow);
         return;
     }
@@ -201,7 +228,8 @@ function loadBranches() {
             <td>${branch.name}</td>
             <td>${branch.location}</td>
             <td>${branch.contact || '-'}</td>
-            <td>${branch.balance || 0} رغيف</td>
+            <td>${branch.balance || 0} كيس عيش</td>
+            <td>${branch.totalPrice || 0} جنيه</td>
             <td>
                 <button class="btn btn-sm btn-warning edit-branch" data-id="${branch.id}">
                     <i class="fas fa-edit"></i>
@@ -373,18 +401,29 @@ function setupReportTypeChange() {
     reportType.addEventListener('change', function() {
         const today = new Date();
         const startDateInput = document.getElementById('startDate');
+        const endDateInput = document.getElementById('endDate');
         
         if (this.value === 'weekly') {
             // تعيين بداية الأسبوع الحالي (الأحد)
             const startOfWeek = new Date(today);
             startOfWeek.setDate(today.getDate() - today.getDay());
             startDateInput.value = startOfWeek.toISOString().split('T')[0];
+            // تعيين نهاية الأسبوع (السبت)
+            const endOfWeek = new Date(startOfWeek);
+            endOfWeek.setDate(startOfWeek.getDate() + 6);
+            endDateInput.value = endOfWeek.toISOString().split('T')[0];
         } else if (this.value === 'monthly') {
             // تعيين بداية الشهر الحالي
             const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
             startDateInput.value = startOfMonth.toISOString().split('T')[0];
+            // تعيين نهاية الشهر الحالي
+            const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+            endDateInput.value = endOfMonth.toISOString().split('T')[0];
+        } else if (this.value === 'custom') {
+            // في حالة المخصص، نترك التواريخ فارغة للمستخدم
+            startDateInput.value = '';
+            endDateInput.value = '';
         }
-        // لا تغيير في حالة custom
     });
 }
 
@@ -433,7 +472,7 @@ function generateReport(type, branchId, startDate, endDate) {
                     <div class="card bg-primary text-white">
                         <div class="card-body text-center">
                             <h3 class="card-title">إجمالي الكمية</h3>
-                            <p class="display-5">${totalQuantity} رغيف</p>
+                            <p class="display-5">${totalQuantity} كيس عيش</p>
                         </div>
                     </div>
                 </div>
@@ -465,6 +504,7 @@ function generateReport(type, branchId, startDate, endDate) {
                             <th>التاريخ</th>
                             <th>الفرع</th>
                             <th>الكمية</th>
+                            <th>السعر</th>
                             <th>ملاحظات</th>
                         </tr>
                     </thead>
@@ -479,7 +519,8 @@ function generateReport(type, branchId, startDate, endDate) {
                 <tr>
                     <td>${formatDateArabic(dist.date)}</td>
                     <td>${branchName}</td>
-                    <td>${dist.quantity} رغيف</td>
+                    <td>${dist.quantity} كيس عيش</td>
+                    <td>${dist.price} جنيه</td>
                     <td>${dist.notes || '-'}</td>
                 </tr>
             `;
@@ -503,10 +544,10 @@ function generateReport(type, branchId, startDate, endDate) {
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <p class="lead">إجمالي التوزيعات: ${totalQuantity} رغيف</p>
+                                    <p class="lead">إجمالي التوزيعات: ${totalQuantity} كيس عيش</p>
                                 </div>
                                 <div class="col-md-6">
-                                    <p class="lead">الرصيد الحالي: ${branch.balance || 0} رغيف</p>
+                                    <p class="lead">الرصيد الحالي: ${branch.balance || 0} كيس عيش</p>
                                 </div>
                             </div>
                         </div>
@@ -529,16 +570,19 @@ function generateId() {
     return Date.now().toString(36) + Math.random().toString(36).substr(2);
 }
 
-function updateBranchBalance(branchId, quantity) {
+function updateBranchBalance(branchId, quantity, price) {
     const branchIndex = branches.findIndex(b => b.id === branchId);
     if (branchIndex !== -1) {
         // إنشاء أو تحديث حقل الرصيد
         if (typeof branches[branchIndex].balance === 'undefined') {
             branches[branchIndex].balance = quantity;
+            branches[branchIndex].totalPrice = price;
         } else {
             branches[branchIndex].balance += quantity;
+            branches[branchIndex].totalPrice = (branches[branchIndex].totalPrice || 0) + price;
         }
         saveBranches();
+        loadBranches(); // تحديث عرض الفروع
     }
 }
 
