@@ -1,0 +1,109 @@
+/* أنماط عامة */
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f8f9fa;
+}
+
+/* الشعار والعناوين */
+
+.navbar-brand {
+  font-weight: bold;
+  font-size: 1.3rem;
+}
+
+.display-4 {
+  font-weight: 600;
+  color: #0d6efd;
+}
+
+/* البطاقات والنماذج */
+
+.card {
+  border: none;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+.card-header {
+  font-weight: bold;
+  padding: 1rem;
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+/* الجداول */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table th {
+  background-color: #f8f9fa;
+  font-weight: bold;
+}
+
+/* الأزرار */
+
+.btn {
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+}
+
+.btn-lg {
+  padding: 0.75rem 1.5rem;
+}
+
+/* المدخلات */
+
+.form-control, .form-select {
+  padding: 0.75rem;
+  border-radius: 7px;
+  border: 1px solid #ced4da;
+}
+
+.form-control:focus, .form-select:focus {
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  border-color: #86b7fe;
+}
+
+/* قسم التقارير */
+
+#reportResults {
+  transition: all 0.3s ease;
+}
+
+/* النموذج المطبوع */
+
+/* للشاشات الصغيرة */
+
+@media (max-width: 768px) {
+  .container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .btn-lg {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+  }
+}
+
+/* تعديلات إضافية لتحسين المظهر في اللغة العربية */
+
+.form-label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.table tbody tr:hover {
+  background-color: rgba(13, 110, 253, 0.05);
+}
+

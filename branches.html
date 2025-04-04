@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="ar" dir="rtl">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>مخبوزات الحاجة</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg bg-primary navbar-dark">
+        <div class="container"><a class="navbar-brand" href="#"><i class="fas fa-bread-slice me-2"></i> مخبوزات الحاجة </a><button data-bs-toggle="collapse" data-bs-target="#navbarNav" class="navbar-toggler" type="button"><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html" data-bs-target="/">الرئيسية</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="branches.html">الفروع</a></li>
+                    <li class="nav-item"><a class="nav-link" href="reports.html">التقارير</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-md-12 text-center mb-4">
+                <h1 class="display-4">إدارة الفروع</h1>
+                <p class="lead">أضف وعدل الفروع التي يتم توزيع العيش البتاوي عليها</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-4 mb-4">
+                <div class="card shadow">
+                    <div class="card-header text-white bg-success">
+                        <h3 class="card-title mb-0">إضافة فرع جديد</h3>
+                    </div>
+                    <div class="card-body">
+                        <form id="branchForm">
+                            <div class="mb-3"><label class="form-label" for="branchName">اسم الفرع</label><input class="form-control form-control" type="text" id="branchName" required=""></div>
+                            <div class="mb-3"><label class="form-label" for="branchLocation">العنوان</label><input class="form-control form-control" type="text" id="branchLocation" required=""></div>
+                            <div class="mb-3"><label class="form-label" for="branchContact">رقم الهاتف</label><input class="form-control form-control" type="tel" id="branchContact"></div>
+                            <div class="text-center"><button class="btn btn-primary" type="submit"><i class="fas fa-plus me-2"></i> إضافة الفرع </button></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="card shadow">
+                    <div class="card-header text-white bg-info">
+                        <h3 class="card-title mb-0">قائمة الفروع</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>الاسم</th>
+                                        <th>العنوان</th>
+                                        <th>رقم الهاتف</th>
+                                        <th>الحساب الحالي</th>
+                                        <th>إجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="branchesTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" role="dialog" tabindex="-1" id="editBranchModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title">تعديل بيانات الفرع</h5><button class="btn-close" aria-label="Close" data-bs-dismiss="modal" type="button"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editBranchForm"><input type="hidden" id="editBranchId">
+                        <div class="mb-3"><label class="form-label" for="editBranchName">اسم الفرع</label><input class="form-control form-control" type="text" id="editBranchName" required=""></div>
+                        <div class="mb-3"><label class="form-label" for="editBranchLocation">العنوان</label><input class="form-control form-control" type="text" id="editBranchLocation" required=""></div>
+                        <div class="mb-3"><label class="form-label" for="editBranchContact">رقم الهاتف</label><input class="form-control form-control" type="tel" id="editBranchContact"></div>
+                    </form>
+                </div>
+                <div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal" type="button">إلغاء</button><button class="btn btn-primary" id="saveBranchEdit" type="button">حفظ التغييرات</button></div>
+            </div>
+        </div>
+    </div>
+    <footer class="text-center text-white bg-dark py-3 mt-5">
+        <div class="container">
+            <p class="mb-0">جميع الحقوق محفوظة © 2025 - مخبوزات الحاجة</p>
+        </div>
+    </footer>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/script.js"></script>
+</body>
+
+</html>
