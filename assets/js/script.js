@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // إضافة مستمع لتغيير الكمية
         quantityInput.addEventListener('input', function() {
             const quantity = parseInt(this.value) || 0;
-            const pricePerBag = 10; // سعر الكيس الواحد (يمكن تعديله)
+            const pricePerBag = 11; // سعر الكيس الواحد (يمكن تعديله)
             const totalPrice = quantity * pricePerBag;
             priceInput.value = totalPrice.toFixed(2);
         });
@@ -464,6 +464,7 @@ function generateReport(type, branchId, startDate, endDate) {
     } else {
         // إحصائيات عامة
         const totalQuantity = filteredDistributions.reduce((sum, dist) => sum + dist.quantity, 0);
+        const totalPrice = filteredDistributions.reduce((sum, dist) => sum + dist.price, 0);
         const branchesCount = new Set(filteredDistributions.map(dist => dist.branchId)).size;
         
         html = `
@@ -544,10 +545,10 @@ function generateReport(type, branchId, startDate, endDate) {
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <p class="lead">إجمالي التوزيعات: ${totalQuantity} كيس عيش</p>
+                                    <p class="lead">إجمالي التوزيعات: ${totalQuantity} كيس عيش (${totalPrice} جنيه)</p>
                                 </div>
                                 <div class="col-md-6">
-                                    <p class="lead">الرصيد الحالي: ${branch.balance || 0} كيس عيش</p>
+                                    <p class="lead">الرصيد الحالي: ${branch.balance || 0} كيس عيش (${branch.totalPrice || 0} جنيه)</p>
                                 </div>
                             </div>
                         </div>
